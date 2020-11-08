@@ -1,50 +1,56 @@
-import java.util.Map.Entry;
-
 import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
+import lc.kra.system.mouse.GlobalMouseHook;
+import lc.kra.system.mouse.event.GlobalMouseAdapter;
+import lc.kra.system.mouse.event.GlobalMouseEvent;
 
 public class Timesheet {
-    
-    private static boolean run = true;
-    
+
     public static void main(String[] args) {
-	
-	GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true); // Use false here to
-	                                                                // switch to hook
-	                                                                // instead of raw input
 
-	System.out.println(
-	    "Global keyboard hook successfully started, press [escape] key to shutdown. Connected keyboards:");
+	GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
 
-	for (Entry<Long, String> keyboard : GlobalKeyboardHook.listKeyboards().entrySet()) {
-	    System.out.format("%d: %s\n", keyboard.getKey(), keyboard.getValue());
-	}
+	System.out.println("Global keyboard hook successfully started.");
 
 	keyboardHook.addKeyListener(new GlobalKeyAdapter() {
-		
-		@Override 
-		public void keyPressed(GlobalKeyEvent event) {
-			System.out.println(event);
-			if (event.getVirtualKeyCode() == GlobalKeyEvent.VK_ESCAPE) {
-				run = false;
-			}
-		}
-		
-		@Override 
-		public void keyReleased(GlobalKeyEvent event) {
-			System.out.println(event); 
-		}
-	});
-	
-	try {
-	    while (run) {
-		Thread.sleep(128);
+
+	    @Override
+	    public void keyPressed(GlobalKeyEvent event) {
+
 	    }
-	} catch (InterruptedException e) {
-	    // Do nothing
-	} finally {
-	    keyboardHook.shutdownHook();
-	}
+
+	    @Override
+	    public void keyReleased(GlobalKeyEvent event) {
+
+	    }
+	});
+
+	GlobalMouseHook mouseHook = new GlobalMouseHook();
+
+	System.out.println("Global mouse hook successfully started.");
+
+	mouseHook.addMouseListener(new GlobalMouseAdapter() {
+
+	    @Override
+	    public void mousePressed(GlobalMouseEvent event) {
+		System.out.println(event);
+	    }
+
+	    @Override
+	    public void mouseReleased(GlobalMouseEvent event) {
+		System.out.println(event);
+	    }
+
+	    @Override
+	    public void mouseMoved(GlobalMouseEvent event) {
+		System.out.println(event);
+	    }
+
+	    @Override
+	    public void mouseWheel(GlobalMouseEvent event) {
+		System.out.println(event);
+	    }
+	});
     }
 }
