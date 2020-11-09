@@ -15,13 +15,15 @@ public class Timesheet {
 
     private static volatile LocalTime activity = LocalTime.now();
 
+    private static volatile boolean AFK = false;
+
     private static final Object LOCK = new Object();
 
     public static void main(String[] args) {
 
 	GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true);
 
-	System.out.println("Global keyboard hook successfully started.");
+	System.out.println("Global keyboard hook successfully started at " + LocalTime.now());
 
 	keyboardHook.addKeyListener(new GlobalKeyAdapter() {
 	    @Override
@@ -41,7 +43,7 @@ public class Timesheet {
 
 	GlobalMouseHook mouseHook = new GlobalMouseHook();
 
-	System.out.println("Global mouse hook successfully started.");
+	System.out.println("Global mouse hook successfully started at " + LocalTime.now());
 
 	mouseHook.addMouseListener(new GlobalMouseAdapter() {
 
@@ -76,16 +78,21 @@ public class Timesheet {
 
 	Timer time = new Timer();
 	time.schedule(new TimerTask() {
-	    boolean afk = false;
+
+	    {
+		System.err.println("Schedular started " + LocalTime.now());
+	    }
 
 	    @Override
 	    public void run() {
 		synchronized (LOCK) {
-		    if (MINUTES.between(activity, LocalTime.now()) > 2 && !afk) {
-			System.err.println("You are afk since " + activity);
-			afk = true;
-		    } else {
-			afk = false;
+		    if (MINUTES.between(activity, LocalTime.now()) > 2) {
+			if (!AFK) {
+			    System.err.println("You are afk since " + activity);
+			    AFK = true;
+			} else {
+			    AFK = false;
+			}
 		    }
 		}
 	    }
